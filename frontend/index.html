@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Étudiants - REST</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎓 Gestion des Étudiants (API REST)</h1>
+
+<section>
+    <h2>📋 Liste des étudiants (IDOR)</h2>
+    <button onclick="chargerEtudiants()">Charger</button>
+    <ul id="liste"></ul>
+</section>
+
+<section>
+    <h2>🔍 Accès direct par ID (IDOR)</h2>
+    <input id="idorId" placeholder="ID ex: 1">
+    <button onclick="testerIDOR()">Tester IDOR</button>
+    <div id="idorResult"></div>
+</section>
+
+<section>
+    <h2>➕ Ajouter un étudiant (auth requise)</h2>
+    <input id="id" placeholder="ID">
+    <input id="nom" placeholder="Nom">
+    <input id="prenom" placeholder="Prénom">
+    <input id="filiere" placeholder="Filière">
+    <button onclick="ajouterEtudiant()">Ajouter</button>
+</section>
+
+<section>
+    <h2>💥 Attaque XSS</h2>
+    <input id="xssInput" placeholder="<script>alert('XSS')</script>">
+    <button onclick="attaqueXSS()">Lancer XSS</button>
+    <div id="xssZone"></div>
+</section>
+
+<section>
+    <h2>🔐 Brute Force (simulation)</h2>
+    <button onclick="bruteForce()">Lancer brute force</button>
+    <pre id="bruteResult"></pre>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>

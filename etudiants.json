@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nom": "Diop",
+    "prenom": "Amadou",
+    "filiere": "Informatique"
+  },
+  {
+    "id": 2,
+    "nom": "Ndiaye",
+    "prenom": "Fatou",
+    "filiere": "Mathematiques"
+  },
+  {
+    "id": 3,
+    "nom": "Sall",
+    "prenom": "Moussa",
+    "filiere": "Physique"
+  },
+  {
+    "id": 4,
+    "nom": "DEME",
+    "prenom": "Ousmane",
+    "filiere": "Cyber"
+  },
+  {
+    "id": 5,
+    "nom": "Sylla",
+    "prenom": "Sokhna Fatou",
+    "filiere": "Cyber"
+  }
+]
