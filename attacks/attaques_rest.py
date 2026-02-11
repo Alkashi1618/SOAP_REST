@@ -40,17 +40,17 @@ class AttaquesREST:
                 )
 
                 if response.status_code == 201:
-                    print(f"✓ SUCCÈS! Mot de passe trouvé: {password}")
+                    print(f" SUCCÈS! Mot de passe trouvé: {password}")
                     return
                 else:
-                    print(f"✗ Échec: {password}")
+                    print(f"x Échec: {password}")
 
             except requests.exceptions.RequestException as e:
-                print(f"✗ Erreur: {password} - {e}")
+                print(f"x Erreur: {password} - {e}")
 
-            time.sleep(0.5)  # Délai pour éviter de surcharger
+            time.sleep(0.5)
 
-        print("\n⚠ Contremesure recommandée: Limitation du taux de tentatives")
+        print("\n!!! Contremesure recommandée: Limitation du taux de tentatives")
 
     def attaque_injection_sql(self):
         """
@@ -80,7 +80,7 @@ class AttaquesREST:
             except Exception as e:
                 print(f"Erreur: {e}")
 
-        print("\n⚠ Contremesure recommandée: Utiliser des requêtes préparées")
+        print("\n!!! Contremesure recommandée: Utiliser des requêtes préparées")
 
     def attaque_xss(self):
         """
@@ -110,7 +110,7 @@ class AttaquesREST:
             except Exception as e:
                 print(f"Erreur: {e}")
 
-        print("\n⚠ Contremesure recommandée: Échapper tout contenu utilisateur")
+        print("\n!!! Contremesure recommandée: Échapper tout contenu utilisateur")
 
     def attaque_dos(self):
         """
@@ -121,7 +121,7 @@ class AttaquesREST:
         print("ATTAQUE 4: DÉNI DE SERVICE (DoS)")
         print("=" * 60)
         print("Description: Surcharge du serveur avec de nombreuses requêtes")
-        print("⚠ VERSION ATTÉNUÉE POUR DÉMONSTRATION")
+        print("!!! VERSION ATTÉNUÉE POUR DÉMONSTRATION")
 
         nb_requests = 10  # Réduit pour la démonstration
         print(f"\nEnvoi de {nb_requests} requêtes simultanées...")
@@ -143,7 +143,7 @@ class AttaquesREST:
                 failed += 1
 
         print(f"Résultat: {success} succès, {failed} échecs")
-        print("\n⚠ Contremesure recommandée: Rate limiting et CAPTCHA")
+        print("\n!!! Contremesure recommandée: Rate limiting et CAPTCHA")
 
     def attaque_idor(self):
         """
@@ -164,13 +164,13 @@ class AttaquesREST:
                 )
                 if response.status_code == 200:
                     data = response.json()
-                    print(f"✓ ID {id}: {data.get('nom')} {data.get('prenom')}")
+                    print(f" ID {id}: {data.get('nom')} {data.get('prenom')}")
                 else:
-                    print(f"✗ ID {id}: Non trouvé")
+                    print(f"x ID {id}: Non trouvé")
             except Exception as e:
-                print(f"✗ ID {id}: Erreur - {e}")
+                print(f"x ID {id}: Erreur - {e}")
 
-        print("\n⚠ Contremesure recommandée: UUIDs au lieu d'IDs séquentiels")
+        print("\n!!! Contremesure recommandée: UUIDs au lieu d'IDs séquentiels")
 
     def attaque_absence_https(self):
         """
@@ -185,17 +185,17 @@ class AttaquesREST:
         print("\nSimulation d'une capture de trafic:")
         print("Username: admin")
         print("Password: password123")
-        print("⚠ Ces informations peuvent être interceptées!")
+        print("!!! Ces informations peuvent être interceptées!")
 
-        print("\n⚠ Contremesure recommandée: Utiliser HTTPS obligatoirement")
+        print("\n !!! Contremesure recommandée: Utiliser HTTPS obligatoirement")
 
 
 def demo_attaques():
     """Exécuter toutes les démonstrations d'attaques"""
-    print("\n" + "🔴" * 30)
+    print("\n" + "=" * 30)
     print("DÉMONSTRATION D'ATTAQUES DE SÉCURITÉ")
     print("UNIQUEMENT À DES FINS ÉDUCATIVES")
-    print("🔴" * 30)
+    print("=" * 30)
 
     attaques = AttaquesREST()
 
@@ -205,7 +205,7 @@ def demo_attaques():
         if response.status_code != 200:
             raise Exception("Serveur non accessible")
     except:
-        print("\n❌ ERREUR: Le serveur REST n'est pas accessible")
+        print("\nERREUR: Le serveur REST n'est pas accessible")
         print("Veuillez démarrer le serveur avec: python rest/api_rest.py")
         return
 
@@ -220,13 +220,13 @@ def demo_attaques():
     print("\n" + "=" * 60)
     print("RÉSUMÉ DES VULNÉRABILITÉS DÉTECTÉES")
     print("=" * 60)
-    print("1. ✗ Authentification faible (brute force possible)")
-    print("2. ✗ Injection SQL (validation insuffisante)")
-    print("3. ✗ XSS (pas d'échappement)")
-    print("4. ✗ Absence de rate limiting (DoS possible)")
-    print("5. ✗ IDOR (IDs prévisibles)")
-    print("6. ✗ Absence de HTTPS (données en clair)")
-    print("\n⚠ CES VULNÉRABILITÉS SONT INTENTIONNELLES POUR LA DÉMONSTRATION")
+    print("1. x Authentification faible (brute force possible)")
+    print("2. x Injection SQL (validation insuffisante)")
+    print("3. x XSS (pas d'échappement)")
+    print("4. x Absence de rate limiting (DoS possible)")
+    print("5. x IDOR (IDs prévisibles)")
+    print("6. x Absence de HTTPS (données en clair)")
+    print("\n!!! CES VULNÉRABILITÉS SONT INTENTIONNELLES POUR LA DÉMONSTRATION")
     print("=" * 60)
 
 

@@ -1,10 +1,6 @@
 const API = "http://127.0.0.1:5050/api/etudiants";
 let requestCount = 0;
 
-// ============================================
-// UTILITAIRES
-// ============================================
-
 function incrementRequests() {
     requestCount++;
     document.getElementById('totalRequetes').textContent = requestCount;
@@ -18,43 +14,32 @@ function showResult(elementId, content, isError = false) {
 }
 
 function showTab(tabName) {
-    // Cacher tous les contenus
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
 
-    // Désactiver tous les onglets
     document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
     });
 
-    // Activer le bon contenu et onglet
     document.getElementById(tabName).classList.add('active');
     event.target.classList.add('active');
 }
-
-// ============================================
-// VÉRIFICATION DU SERVEUR
-// ============================================
 
 async function verifierServeur() {
     try {
         const response = await fetch(API);
         if (response.ok) {
-            document.getElementById('serverStatus').textContent = '✅ Serveur en ligne';
+            document.getElementById('serverStatus').textContent = 'Server Online';
             document.getElementById('serverStatus').className = 'status';
             return true;
         }
     } catch (error) {
-        document.getElementById('serverStatus').textContent = '❌ Serveur hors ligne';
+        document.getElementById('serverStatus').textContent = 'Server Offline';
         document.getElementById('serverStatus').className = 'status offline';
         return false;
     }
 }
-
-// ============================================
-// GESTION DES ÉTUDIANTS
-// ============================================
 
 async function chargerEtudiants() {
     incrementRequests();
@@ -67,11 +52,10 @@ async function chargerEtudiants() {
         liste.innerHTML = '';
 
         if (etudiants.length === 0) {
-            liste.innerHTML = '<p style="color: #6b7280;">Aucun étudiant enregistré</p>';
+            liste.innerHTML = '<p style="color: #64748b;">No students registered</p>';
             return;
         }
 
-        // Mettre à jour les stats
         document.getElementById('totalEtudiants').textContent = etudiants.length;
 
         const filieres = [...new Set(etudiants.map(e => e.filiere))];
@@ -84,18 +68,18 @@ async function chargerEtudiants() {
                 <div>
                     <strong>${etudiant.prenom} ${etudiant.nom}</strong>
                     <br>
-                    <small style="color: #6b7280;">ID: ${etudiant.id} | ${etudiant.filiere}</small>
+                    <small>ID: ${etudiant.id} | ${etudiant.filiere}</small>
                 </div>
                 <div>
-                    <button onclick="chargerPourModificationDirect(${etudiant.id})">✏️</button>
-                    <button onclick="supprimerEtudiantDirect(${etudiant.id})" class="danger">🗑️</button>
+                    <button onclick="chargerPourModificationDirect(${etudiant.id})">Edit</button>
+                    <button onclick="supprimerEtudiantDirect(${etudiant.id})" class="danger">Delete</button>
                 </div>
             `;
             liste.appendChild(div);
         });
 
     } catch (error) {
-        showResult('listeEtudiants', 'Erreur: ' + error.message, true);
+        showResult('listeEtudiants', 'Error: ' + error.message, true);
     }
 }
 
@@ -108,7 +92,7 @@ async function ajouterEtudiant() {
     const filiere = document.getElementById('addFiliere').value;
 
     if (!id || !nom || !prenom || !filiere) {
-        showResult('addResult', 'Erreur: Tous les champs sont requis', true);
+        showResult('addResult', 'Error: All fields are required', true);
         return;
     }
 
@@ -125,19 +109,17 @@ async function ajouterEtudiant() {
         const result = await response.json();
 
         if (response.ok) {
-            showResult('addResult', '✅ ' + result.message);
-            // Réinitialiser le formulaire
+            showResult('addResult', 'SUCCESS: ' + result.message);
             document.getElementById('addId').value = '';
             document.getElementById('addNom').value = '';
             document.getElementById('addPrenom').value = '';
             document.getElementById('addFiliere').value = '';
-            // Actualiser la liste
             chargerEtudiants();
         } else {
-            showResult('addResult', '❌ ' + result.error, true);
+            showResult('addResult', 'ERROR: ' + result.error, true);
         }
     } catch (error) {
-        showResult('addResult', 'Erreur: ' + error.message, true);
+        showResult('addResult', 'Error: ' + error.message, true);
     }
 }
 
@@ -147,7 +129,7 @@ async function rechercherParId() {
     const id = document.getElementById('searchId').value;
 
     if (!id) {
-        showResult('searchResult', 'Erreur: Entrez un ID', true);
+        showResult('searchResult', 'Error: Enter an ID', true);
         return;
     }
 
@@ -156,20 +138,13 @@ async function rechercherParId() {
         const result = await response.json();
 
         if (response.ok) {
-            const formatted = `
-✅ Étudiant trouvé:
-═══════════════════════════════════
-ID: ${result.id}
-Nom: ${result.nom}
-Prénom: ${result.prenom}
-Filière: ${result.filiere}
-═══════════════════════════════════`;
+            const formatted = `Student Found:\nID: ${result.id}\nLast Name: ${result.nom}\nFirst Name: ${result.prenom}\nDepartment: ${result.filiere}`;
             showResult('searchResult', formatted);
         } else {
-            showResult('searchResult', '❌ ' + result.error, true);
+            showResult('searchResult', 'ERROR: ' + result.error, true);
         }
     } catch (error) {
-        showResult('searchResult', 'Erreur: ' + error.message, true);
+        showResult('searchResult', 'Error: ' + error.message, true);
     }
 }
 
@@ -179,7 +154,7 @@ async function rechercherParFiliere() {
     const filiere = document.getElementById('searchFiliere').value;
 
     if (!filiere) {
-        showResult('searchResult', 'Erreur: Entrez une filière', true);
+        showResult('searchResult', 'Error: Enter a department', true);
         return;
     }
 
@@ -188,20 +163,18 @@ async function rechercherParFiliere() {
         const etudiants = await response.json();
 
         if (etudiants.length === 0) {
-            showResult('searchResult', `❌ Aucun étudiant trouvé dans la filière "${filiere}"`, true);
+            showResult('searchResult', `No students found in department: ${filiere}`, true);
             return;
         }
 
-        let result = `✅ ${etudiants.length} étudiant(s) trouvé(s) en ${filiere}:\n`;
-        result += '═══════════════════════════════════\n';
+        let result = `${etudiants.length} student(s) found in ${filiere}:\n\n`;
         etudiants.forEach(e => {
             result += `ID ${e.id}: ${e.prenom} ${e.nom}\n`;
         });
-        result += '═══════════════════════════════════';
 
         showResult('searchResult', result);
     } catch (error) {
-        showResult('searchResult', 'Erreur: ' + error.message, true);
+        showResult('searchResult', 'Error: ' + error.message, true);
     }
 }
 
@@ -211,7 +184,7 @@ async function chargerPourModification() {
     const id = document.getElementById('modifyId').value;
 
     if (!id) {
-        showResult('modifyResult', 'Erreur: Entrez un ID', true);
+        showResult('modifyResult', 'Error: Enter an ID', true);
         return;
     }
 
@@ -224,22 +197,19 @@ async function chargerPourModification() {
             document.getElementById('modifyPrenom').value = etudiant.prenom;
             document.getElementById('modifyFiliere').value = etudiant.filiere;
             document.getElementById('modifyForm').style.display = 'block';
-            showResult('modifyResult', '✅ Étudiant chargé - Modifiez les champs ci-dessous');
+            showResult('modifyResult', 'Student loaded - Modify fields below');
         } else {
-            showResult('modifyResult', '❌ ' + etudiant.error, true);
+            showResult('modifyResult', 'ERROR: ' + etudiant.error, true);
         }
     } catch (error) {
-        showResult('modifyResult', 'Erreur: ' + error.message, true);
+        showResult('modifyResult', 'Error: ' + error.message, true);
     }
 }
 
 function chargerPourModificationDirect(id) {
     document.getElementById('modifyId').value = id;
-    // Basculer vers l'onglet gestion
-    showTab('gestion');
-    // Scroller vers le formulaire de modification
+    showTab('management');
     document.querySelector('#modifyId').scrollIntoView({ behavior: 'smooth' });
-    // Charger les données
     setTimeout(() => chargerPourModification(), 500);
 }
 
@@ -252,7 +222,7 @@ async function modifierEtudiant() {
     const filiere = document.getElementById('modifyFiliere').value;
 
     if (!id || !nom || !prenom || !filiere) {
-        showResult('modifyResult', 'Erreur: Tous les champs sont requis', true);
+        showResult('modifyResult', 'Error: All fields are required', true);
         return;
     }
 
@@ -269,13 +239,13 @@ async function modifierEtudiant() {
         const result = await response.json();
 
         if (response.ok) {
-            showResult('modifyResult', '✅ ' + result.message);
+            showResult('modifyResult', 'SUCCESS: ' + result.message);
             chargerEtudiants();
         } else {
-            showResult('modifyResult', '❌ ' + result.error, true);
+            showResult('modifyResult', 'ERROR: ' + result.error, true);
         }
     } catch (error) {
-        showResult('modifyResult', 'Erreur: ' + error.message, true);
+        showResult('modifyResult', 'Error: ' + error.message, true);
     }
 }
 
@@ -285,11 +255,11 @@ async function supprimerEtudiant() {
     const id = document.getElementById('modifyId').value;
 
     if (!id) {
-        showResult('modifyResult', 'Erreur: Entrez un ID', true);
+        showResult('modifyResult', 'Error: Enter an ID', true);
         return;
     }
 
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'étudiant ID ${id} ?`)) {
+    if (!confirm(`Are you sure you want to delete student ID ${id}?`)) {
         return;
     }
 
@@ -304,20 +274,20 @@ async function supprimerEtudiant() {
         const result = await response.json();
 
         if (response.ok) {
-            showResult('modifyResult', '✅ ' + result.message);
+            showResult('modifyResult', 'SUCCESS: ' + result.message);
             document.getElementById('modifyForm').style.display = 'none';
             document.getElementById('modifyId').value = '';
             chargerEtudiants();
         } else {
-            showResult('modifyResult', '❌ ' + result.error, true);
+            showResult('modifyResult', 'ERROR: ' + result.error, true);
         }
     } catch (error) {
-        showResult('modifyResult', 'Erreur: ' + error.message, true);
+        showResult('modifyResult', 'Error: ' + error.message, true);
     }
 }
 
 async function supprimerEtudiantDirect(id) {
-    if (!confirm(`Supprimer l'étudiant ID ${id} ?`)) {
+    if (!confirm(`Delete student ID ${id}?`)) {
         return;
     }
 
@@ -334,13 +304,13 @@ async function supprimerEtudiantDirect(id) {
         const result = await response.json();
 
         if (response.ok) {
-            alert('✅ ' + result.message);
+            alert('SUCCESS: ' + result.message);
             chargerEtudiants();
         } else {
-            alert('❌ ' + result.error);
+            alert('ERROR: ' + result.error);
         }
     } catch (error) {
-        alert('Erreur: ' + error.message);
+        alert('Error: ' + error.message);
     }
 }
 
@@ -357,18 +327,14 @@ function exporterJSON() {
         });
 }
 
-// ============================================
-// ATTAQUES DE SÉCURITÉ
-// ============================================
-
 async function attaqueBruteForce() {
     incrementRequests();
 
     const passwords = ['123456', 'password', 'admin', 'password123', '12345678', 'qwerty'];
-    let result = '🔐 BRUTE FORCE - Tentative de deviner le mot de passe\n';
-    result += '═══════════════════════════════════════════════════\n\n';
+    let result = 'BRUTE FORCE ATTACK - Password Guessing\n';
+    result += '================================================\n\n';
 
-    showResult('bruteForceResult', result + '⏳ Test en cours...');
+    showResult('bruteForceResult', result + 'Testing in progress...');
 
     for (let i = 0; i < passwords.length; i++) {
         const pwd = passwords[i];
@@ -384,23 +350,34 @@ async function attaqueBruteForce() {
             });
 
             if (response.status === 201) {
-                result += `✅ SUCCÈS! Mot de passe trouvé: ${pwd}\n`;
-                result += `\n💡 Impact: Accès non autorisé au système\n`;
-                result += `🛡️ Contremesure: Rate limiting, CAPTCHA, 2FA\n`;
+                result += `SUCCESS! Password found: ${pwd}\n\n`;
+                result += `Impact: Unauthorized system access\n`;
+                result += `Countermeasure: Rate limiting, CAPTCHA, 2FA\n`;
                 showResult('bruteForceResult', result);
+
+                // Nettoyer en supprimant l'étudiant test
+                try {
+                    await fetch(`${API}/999`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': 'Basic ' + btoa('admin:password123')
+                        }
+                    });
+                } catch (e) {}
+
                 return;
             } else {
-                result += `❌ Échec: ${pwd}\n`;
+                result += `Failed: ${pwd}\n`;
             }
         } catch (error) {
-            result += `⚠️ Erreur: ${pwd}\n`;
+            result += `Failed: ${pwd}\n`;
         }
 
         showResult('bruteForceResult', result);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 300));
     }
 
-    result += '\n❌ Aucun mot de passe trouvé dans la liste\n';
+    result += '\nNo password found in list\n';
     showResult('bruteForceResult', result);
 }
 
@@ -409,8 +386,8 @@ async function attaqueSQL() {
 
     const payload = document.getElementById('sqlPayload').value;
 
-    let result = '💉 INJECTION SQL\n';
-    result += '═══════════════════════════════════════════════════\n\n';
+    let result = 'SQL INJECTION ATTACK\n';
+    result += '================================================\n\n';
     result += `Payload: ${payload}\n\n`;
 
     try {
@@ -421,13 +398,18 @@ async function attaqueSQL() {
         });
 
         const data = await response.json();
-        result += `Réponse du serveur:\n${JSON.stringify(data, null, 2)}\n\n`;
-        result += `💡 Impact: Manipulation de la base de données\n`;
-        result += `🛡️ Contremesure: Requêtes préparées, validation stricte\n`;
+        result += `Server Response:\n`;
+        result += `{\n`;
+        result += `  "query": "${data.query}",\n`;
+        result += `  "result": "${data.result}",\n`;
+        result += `  "warning": "${data.warning}"\n`;
+        result += `}\n\n`;
+        result += `Impact: Database manipulation\n`;
+        result += `Countermeasure: Prepared statements, strict validation\n`;
 
         showResult('sqlResult', result);
     } catch (error) {
-        showResult('sqlResult', 'Erreur: ' + error.message, true);
+        showResult('sqlResult', 'Error: Server not responding\nMake sure the REST server is running on port 5050', true);
     }
 }
 
@@ -436,8 +418,8 @@ async function attaqueXSS() {
 
     const payload = document.getElementById('xssPayload').value;
 
-    let result = '💥 CROSS-SITE SCRIPTING (XSS)\n';
-    result += '═══════════════════════════════════════════════════\n\n';
+    let result = 'CROSS-SITE SCRIPTING (XSS) ATTACK\n';
+    result += '================================================\n\n';
     result += `Payload: ${payload}\n\n`;
 
     try {
@@ -448,18 +430,22 @@ async function attaqueXSS() {
         });
 
         const data = await response.json();
-        result += `Réponse du serveur:\n${JSON.stringify(data, null, 2)}\n\n`;
+        result += `Server Response:\n`;
+        result += `{\n`;
+        result += `  "html": "${data.html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}",\n`;
+        result += `  "warning": "${data.warning}"\n`;
+        result += `}\n\n`;
 
         // DANGER: Injection directe pour démonstration
         document.getElementById('xssZone').innerHTML = data.html;
 
-        result += `⚠️ Le code a été injecté dans la zone ci-dessous!\n`;
-        result += `💡 Impact: Vol de session, phishing, malware\n`;
-        result += `🛡️ Contremesure: Échappement HTML, CSP\n`;
+        result += `WARNING: Code injected in zone below!\n`;
+        result += `Impact: Session theft, phishing, malware\n`;
+        result += `Countermeasure: HTML escaping, CSP\n`;
 
         showResult('xssResult', result);
     } catch (error) {
-        showResult('xssResult', 'Erreur: ' + error.message, true);
+        showResult('xssResult', 'Error: Server not responding\nMake sure the REST server is running on port 5050', true);
     }
 }
 
@@ -468,11 +454,11 @@ async function attaqueDoS() {
 
     const count = parseInt(document.getElementById('dosCount').value) || 50;
 
-    let result = '⚡ DÉNI DE SERVICE (DoS)\n';
-    result += '═══════════════════════════════════════════════════\n\n';
-    result += `Envoi de ${count} requêtes rapides...\n\n`;
+    let result = 'DENIAL OF SERVICE (DoS) ATTACK\n';
+    result += '================================================\n\n';
+    result += `Sending ${count} rapid requests...\n\n`;
 
-    showResult('dosResult', result + '⏳ Attaque en cours...');
+    showResult('dosResult', result + 'Attack in progress...');
 
     const startTime = Date.now();
     let success = 0;
@@ -491,12 +477,12 @@ async function attaqueDoS() {
 
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-    result += `✅ Requêtes réussies: ${success}\n`;
-    result += `❌ Requêtes échouées: ${failed}\n`;
-    result += `⏱️ Durée totale: ${duration} secondes\n`;
-    result += `📊 Débit: ${(count / duration).toFixed(2)} req/s\n\n`;
-    result += `💡 Impact: Surcharge serveur, indisponibilité\n`;
-    result += `🛡️ Contremesure: Rate limiting, CDN, CAPTCHA\n`;
+    result += `Successful requests: ${success}\n`;
+    result += `Failed requests: ${failed}\n`;
+    result += `Total duration: ${duration} seconds\n`;
+    result += `Throughput: ${(count / duration).toFixed(2)} req/s\n\n`;
+    result += `Impact: Server overload, service unavailability\n`;
+    result += `Countermeasure: Rate limiting, CDN, CAPTCHA\n`;
 
     showResult('dosResult', result);
 }
@@ -508,15 +494,15 @@ async function attaqueIDOR() {
     const [start, end] = range.split('-').map(Number);
 
     if (!start || !end) {
-        showResult('idorResult', 'Erreur: Format invalide. Utilisez: 1-10', true);
+        showResult('idorResult', 'Error: Invalid format. Use: 1-10', true);
         return;
     }
 
-    let result = '🔓 IDOR - Insecure Direct Object Reference\n';
-    result += '═══════════════════════════════════════════════════\n\n';
-    result += `Énumération des IDs de ${start} à ${end}...\n\n`;
+    let result = 'IDOR ATTACK - Insecure Direct Object Reference\n';
+    result += '================================================\n\n';
+    result += `Enumerating IDs from ${start} to ${end}...\n\n`;
 
-    showResult('idorResult', result + '⏳ Scan en cours...');
+    showResult('idorResult', result + 'Scan in progress...');
 
     for (let id = start; id <= end; id++) {
         try {
@@ -524,65 +510,51 @@ async function attaqueIDOR() {
 
             if (response.ok) {
                 const etudiant = await response.json();
-                result += `✅ ID ${id}: ${etudiant.prenom} ${etudiant.nom} (${etudiant.filiere})\n`;
+                result += `FOUND ID ${id}: ${etudiant.prenom} ${etudiant.nom} (${etudiant.filiere})\n`;
             } else {
-                result += `❌ ID ${id}: Non trouvé\n`;
+                result += `NOT FOUND ID ${id}\n`;
             }
         } catch (error) {
-            result += `⚠️ ID ${id}: Erreur\n`;
+            result += `ERROR ID ${id}\n`;
         }
 
         showResult('idorResult', result);
         await new Promise(resolve => setTimeout(resolve, 200));
     }
 
-    result += `\n💡 Impact: Accès à des données non autorisées\n`;
-    result += `🛡️ Contremesure: UUIDs, vérification des permissions\n`;
+    result += `\nImpact: Access to unauthorized data\n`;
+    result += `Countermeasure: UUIDs, permission verification\n`;
 
     showResult('idorResult', result);
 }
 
 function verifierHTTPS() {
-    let result = '🔒 VÉRIFICATION HTTPS\n';
-    result += '═══════════════════════════════════════════════════\n\n';
+    let result = 'HTTPS VERIFICATION\n';
+    result += '================================================\n\n';
 
     const protocol = window.location.protocol;
     const apiProtocol = new URL(API).protocol;
 
-    result += `Protocol de la page: ${protocol}\n`;
-    result += `Protocol de l'API: ${apiProtocol}\n\n`;
+    result += `Page protocol: ${protocol}\n`;
+    result += `API protocol: ${apiProtocol}\n\n`;
 
     if (protocol === 'http:' || apiProtocol === 'http:') {
-        result += `❌ VULNÉRABLE: Communication non chiffrée\n\n`;
-        result += `Les données sont transmises en CLAIR:\n`;
-        result += `- Identifiants de connexion\n`;
-        result += `- Données personnelles\n`;
-        result += `- Cookies de session\n\n`;
-        result += `💡 Impact: Interception (Man-in-the-Middle)\n`;
-        result += `🛡️ Contremesure: HTTPS obligatoire, HSTS\n`;
+        result += `VULNERABLE: Unencrypted communication\n\n`;
+        result += `Data transmitted in CLEAR TEXT:\n`;
+        result += `- Login credentials\n`;
+        result += `- Personal data\n`;
+        result += `- Session cookies\n\n`;
+        result += `Impact: Interception (Man-in-the-Middle)\n`;
+        result += `Countermeasure: Mandatory HTTPS, HSTS\n`;
     } else {
-        result += `✅ SÉCURISÉ: Communication chiffrée\n`;
+        result += `SECURE: Encrypted communication\n`;
     }
 
     showResult('httpsResult', result);
 }
 
-// ============================================
-// AUTRES FONCTIONS
-// ============================================
-
-function ouvrirAPI() {
-    window.open('http://127.0.0.1:5050/', '_blank');
-}
-
-// ============================================
-// INITIALISATION
-// ============================================
-
 window.addEventListener('load', () => {
     verifierServeur();
     chargerEtudiants();
-
-    // Vérifier le serveur toutes les 30 secondes
     setInterval(verifierServeur, 30000);
 });

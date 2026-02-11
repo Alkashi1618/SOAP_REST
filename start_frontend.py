@@ -19,7 +19,7 @@ def print_banner():
 
 def start_rest_server():
     """Démarrer le serveur REST"""
-    print("🚀 Démarrage du serveur REST...")
+    print("Démarrage du serveur REST...")
     print("   URL: http://127.0.0.1:5050")
     print()
 
@@ -43,16 +43,16 @@ def start_rest_server():
                 stderr=subprocess.DEVNULL
             )
 
-        print("✅ Serveur REST démarré")
+        print(" Serveur REST démarré")
         return server_process
     except Exception as e:
-        print(f"❌ Erreur lors du démarrage du serveur: {e}")
+        print(f"Erreur lors du démarrage du serveur: {e}")
         return None
 
 
 def open_frontend():
     """Ouvrir le frontend dans le navigateur"""
-    print("\n🌐 Ouverture de l'interface web...")
+    print("\nOuverture de l'interface web...")
 
     # Attendre que le serveur soit prêt
     time.sleep(2)
@@ -64,7 +64,7 @@ def open_frontend():
     # Ouvrir dans le navigateur par défaut
     webbrowser.open(frontend_url)
 
-    print("✅ Interface web ouverte dans le navigateur")
+    print("Interface web ouverte dans le navigateur")
     print()
 
 
@@ -75,21 +75,21 @@ def main():
     server_process = start_rest_server()
 
     if server_process is None:
-        print("\n❌ Impossible de démarrer. Vérifiez que Python et les dépendances sont installés.")
+        print("\nImpossible de démarrer. Vérifiez que Python et les dépendances sont installés.")
         return
 
     # Ouvrir le frontend
     open_frontend()
 
     print("=" * 60)
-    print("🎉 TOUT EST PRÊT !")
+    print("TOUT EST PRÊT !")
     print("=" * 60)
-    print("\n📋 INSTRUCTIONS:")
+    print("\nINSTRUCTIONS:")
     print("  1. L'interface web est ouverte dans votre navigateur")
     print("  2. Le serveur REST tourne sur http://127.0.0.1:5050")
     print("  3. Appuyez sur Ctrl+C pour arrêter")
     print()
-    print("🔐 AUTHENTIFICATION:")
+    print("AUTHENTIFICATION:")
     print("  - Username: admin")
     print("  - Password: password123")
     print()
@@ -97,19 +97,19 @@ def main():
 
     try:
         # Garder le script en vie
-        print("\n⏳ Serveur en cours d'exécution... Appuyez sur Ctrl+C pour arrêter\n")
+        print("\nServeur en cours d'exécution... Appuyez sur Ctrl+C pour arrêter\n")
         server_process.wait()
     except KeyboardInterrupt:
-        print("\n\n🛑 Arrêt du serveur...")
+        print("\n\n Arrêt du serveur...")
         server_process.terminate()
         server_process.wait()
-        print("✅ Serveur arrêté. Au revoir !")
+        print(" Serveur arrêté. Au revoir !")
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"\n❌ ERREUR: {e}")
+        print(f"\n ERREUR: {e}")
         print("\nConsultez README.md pour l'aide")
         sys.exit(1)
